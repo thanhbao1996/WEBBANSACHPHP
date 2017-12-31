@@ -4,7 +4,7 @@ session_start();
 <html>
 <head>
 <meta charset="utf-8">
-
+hello my name í Bao
 <title>Cửa Hàng Sách Online</title>
 <link rel="stylesheet" href="css/style.css" type="text/css" media="all">
 </head>
