@@ -1,11 +1,10 @@
-<?php
+﻿<?php
 session_start();
 ?>
 <html>
 <head>
 <meta charset="utf-8">
 hello my name í Bao
-<title>Cửa Hàng Sách Online</title>
 <link rel="stylesheet" href="css/style.css" type="text/css" media="all">
 </head>
 
@@ -15,7 +14,6 @@ hello my name í Bao
 
 		<td width="650" valign="top"><!--load sách đồng thời xử lý phân trang-->
 		<?php
-		included  'content_page_home.php';
 		?></td>
 
 		<!-- Menu bên phải -->
