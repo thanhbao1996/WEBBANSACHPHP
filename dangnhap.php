@@ -1,8 +1,5 @@
 ﻿<?php 
-	session_start();
-
-	
-	
+session_start();
 ?>
 <html>
 <head>
@@ -72,31 +69,16 @@ mysql_query("set names 'utf8'",$connect);
  </tr>
  ";
 //đưa loại sửa ra hàng thứ nhất
-
-$arrLoaiSach=array();
- 
 while ($row=mysql_fetch_array($result_loaisach))
 {
 	echo "<tr style='background:url(images/bg_tr_1.png);background-size: 100% 100%;'><td style='padding: 15 15 15 15;'>";
 	echo "<a href='loaisach.php?maloaisach={$row['MaLoaiSach']}' style='text-decoration:none'><b><font color='yellow' size='5pt'>".$row['TenLoaiSach']."</font></b></a>";
 	echo "</td></tr>";
-	
-	$maloaisach=$row['MaLoaiSach'];
-	$tenloaisach=$row['TenLoaiSach'];
-	$arrLoaiSach[$maloaisach]=$tenloaisach;
 }
 
 echo "</table>";
 
 ?>
-
-<!--lấy tất cả mã quyền và tên quyền-->
-<?php 
-									
-									
-
-?>
-
 </td>
 </tr>
 
@@ -117,170 +99,91 @@ echo "</table>";
 
 <td width="650" valign="top">
 
+<!-- xử lý comment -->
+ 
+ <?php 
+ $strKetQua="";
+ $TieuDe="";
+ $NoiDung="";
+ 
 
-			
-						<!-- Xử lý việc thêm thành viên -->
-						<?php 
-							
-							$strKetQua="";
-							$TenDangNhap=$_GET['tendangnhap'];
-							
-
-							//lấy thông tin thành viên đưa vào input
-							$str_get_one_thanh_vien="select * from taikhoan WHERE TenDangNhap=N'$TenDangNhap'";
-							$result_taikhoan=mysql_query($str_get_one_thanh_vien);
-							while ($row_taikhoan=mysql_fetch_array($result_taikhoan))
-							{
-								$MatKhau=$row_taikhoan['MatKhau'];
-								$HoTen=$row_taikhoan['HoTen'];
-								$Email=$row_taikhoan['Email'];
-								$DienThoai=$row_taikhoan['DienThoai'];
-								$MaQuyen=$row_taikhoan['MaQuyen'];
-							}
-							
-							
-							//tiến hành sửa thành viên nếu được click
-							if (isset($_POST['SuaThanhVien']))
-							{
-								//lấy lại dữ liệu từ input vào để tiến hành cập nhật
-								$mat_khau=$_POST['MatKhau'];
-								$ho_ten=$_POST['HoTen'];
-								$email=$_POST['Email'];
-								$dien_thoai=$_POST['DienThoai'];
-								$ma_quyen=$_POST['MaQuyen'];
-								$str_update_thanh_vien="UPDATE taikhoan SET MatKhau=N'$mat_khau', HoTen=N'$ho_ten',Email=N'$email', DienThoai='$dien_thoai', MaQuyen=N'$ma_quyen' WHERE TenDangNhap=N'$TenDangNhap'";
-								
-//								echo $str_update_thanh_vien;
-								
-								if (!mysql_query($str_update_thanh_vien))
-								{
-									$strKetQua="Lỗi cập nhật dữ liệu !";
-								}
-								else {
-									$strKetQua="Cập nhật thành công !";
-									//cập nhật lại thông tin sau khi sửa đổi
-									$MatKhau=$mat_khau;
-									$HoTen=$ho_ten;
-									$Email=$email;
-									$DienThoai=$dien_thoai;
-									$MaQuyen=$ma_quyen;
-								}
-							}
-							
-						?>
-
-
-
-		<form action="sua_thanh_vien.php?tendangnhap=<?php echo $TenDangNhap;?>" method="post">
-		 <table width='100%' align="center" bgcolor="white">
+ 	//kiểm tra tồn tại tiêu đề và nội dung
+ 	if (isset($_POST['TieuDe'])&&isset($_POST['NoiDung']))
+ 	{
+ 		$TieuDe=$_POST['TieuDe'];
+ 		$NoiDung=$_POST['NoiDung'];
+ 		//kiểm tra rỗng
+ 		if ((empty($TieuDe)==true) or (empty($NoiDung)==true))
+ 		{
+ 			$strKetQua="Nhập thiếu tiêu đề hoặc nội dung !";
+ 		}
+ 		else 
+ 		{
+ 			if (empty($_SESSION['TenDangNhap'])==true)
+ 			{
+ 				$strKetQua="Vui lòng đăng nhập để thực hiện việc này !";
+ 			}
+ 			else 
+ 			{
+	 			if (isset($_POST['GopY']))
+	 			{	//INSERT INTO gopy (TenDangNhap,TieuDeGopY,NoiDungGopY) VALUES (N'nh0ckti',N'Góp Ý Nội Dung',N'Cần cập nhật thêm các đầu sách mới !')
+	 				$TenDangNhap=$_SESSION['TenDangNhap'];
+	 				$str_gop_y_insert="INSERT INTO gopy (TenDangNhap,TieuDeGopY,NoiDungGopY) VALUES (N'$TenDangNhap',N'$TieuDe',N'$NoiDung')";
+	 				mysql_query($str_gop_y_insert);
+	 				$strKetQua="Cảm ơn $TenDangNhap đã góp ý cho chúng tôi !";
+	 			}
+ 			}
+ 		}
+ 		
+ 		
+ 		
+ 		
+ 	}
+ 	
+ 
+ 
+ 
+ ?>
+ 
+ <!-- Form góp ý -->
+<form action="gopy.php" method="post">
+ 
+		 <table width='100%' align="center">
 		 <tr style='background:url(images/bg_tr.jpg);background-size: 100% 100%; margin-bottom:10;'>
 		 	<td align='center' colspan='2'>
-		 		<b><font color='white' size='6pt'>Thêm Thành Viên</font></b>
+		 		<b><font color='white' size='6pt'>Đăng Nhập</font></b>
 		 	</td>
 		 </tr>
 		 
-		<?php 
-				if (empty($_SESSION['TenDangNhap'])==true)
-				{
-					echo "<b><font color='red' size='5'>Vui lòng đăng nhập để vào trang này !</b></font>";
-				}
-				else {
-					if ($_SESSION['MaQuyen']!='Admin')
-					{
-						echo "<b><font color='red' size='5'>Bạn không có quyền vào trang này..vui lòng liên hệ quản trị viên !</b></font>";
-					}
-					else 
-					{
-				?>		
-				
-						
-						
-				
-						<!-- giao diện thêm loại sách mới -->
-						
-							<tr>
-							<td width="200px"><b><font size="5">Tên đăng nhập : </font></b></td>
-							<td style="padding:10px"><input type="text" name="TenDangNhap" style="width:200px; padding:5; font-size:20;" value="<?php echo $TenDangNhap;?>" disabled="disabled"></td>
-							</tr>
-							
-							<tr>
-							<td width="200px"><b><font size="5">Mật khẩu : </font></b></td>
-							<td style="padding:10px"><input type="text" name="MatKhau" style="width:200px; padding:5; font-size:20;" value="<?php echo $MatKhau;?>"></td>
-							</tr>
-							
-							<tr>
-							<td width="200px"><b><font size="5">Họ tên : </font></b></td>
-							<td style="padding:10px"><input type="text" name="HoTen" style="width:200px; padding:5; font-size:20;" value="<?php echo $HoTen;?>"></td>
-							</tr>
-							
-							<tr>
-							<td width="200px"><b><font size="5">Email : </font></b></td>
-							<td style="padding:10px"><input type="text" name="Email" style="width:200px; padding:5; font-size:20;" value="<?php echo $Email;?>"></td>
-							</tr>
-							
-							<tr>
-							<td width="200px"><b><font size="5">Điện thoại : </font></b></td>
-							<td style="padding:10px"><input type="text" name="DienThoai" style="width:200px; padding:5; font-size:20;" value="<?php echo $DienThoai;?>"></td>
-							</tr>
-							
-							<tr>
-							<td width="200px"><b><font size="5">Quyền hạn : </font></b></td>
-							<td style="padding:10px">
-							
-							
-							
-							<select name="MaQuyen" style="width:200px; padding:5; font-size:20;">
-							
-								
-								<?php 
-									$str_get_all_MaQuyen="SELECT taikhoan.*,quyentaikhoan.TenQuyen FROM taikhoan,quyentaikhoan WHERE taikhoan.MaQuyen=quyentaikhoan.MaQuyen";
-									$result_maquyen=mysql_query($str_get_all_MaQuyen);
-									
-									$arrMaQuyen=array();
-									while ($row_maquyen=mysql_fetch_array($result_maquyen))
-									{
-										$maquyen=$row_maquyen['MaQuyen'];
-										$tenquyen=$row_maquyen['TenQuyen'];
-										$arrMaQuyen[$maquyen]=$tenquyen;
-									}
-								
-								
-									foreach ($arrMaQuyen as $key => $value) {
-										echo "<option value='$key'";
-										if ($key==$MaQuyen)
-										{
-											echo " selected='selected'";
-										}
-										echo ">$value</option>";
-									}
-									
-									
-								?>
-							
-							</select>
-							
-							</td>
-							</tr>
-							
-							<tr>
-							<td width="200px"></td>
-							<td style="padding:10px"><input type="submit" value="Hoàn Thành" name="SuaThanhVien" style="width:200px;padding:5;font-size:20; font-weight:bold;"></td>
-							</tr>
-							
-							<!-- Thông báo -->
-							<tr>
-							<td></td>
-							<td><label><b><font color="red" size="4"><?php echo $strKetQua;?></font></b></label></td>
-							</tr>
-							
-				<?php 		
-					}
-				}
-			
 		
-		?>
-		 
-		</table></form> 
+		<tr>
+		<td width="200px"><b><font size="5">Tiêu đề : </font></b></td>
+		<td style="padding:10px"><input type="text" name="TieuDe" style="width:400px; padding:5; font-size:20;"></td>
+		</tr>
+		
+		<tr>
+		<td width="200px" valign="top"><b><font size="5">Nội dung : </font></b></td>
+		<td style="padding:10px">
+		
+		<textarea rows="10" cols="50" name="NoiDung" style="width:400px;font-size:15;"></textarea>
+		</td>
+		</tr>
+		
+		<tr>
+		<td width="200px"></td>
+		<td style="padding:10px"><input type="submit" value="Gửi" name="GopY" style="width:400px;padding:5;font-size:20; font-weight:bold;"></td>
+		</tr>
+		
+		<!-- Thông báo -->
+		<tr>
+		<td></td>
+		<td><label><b><font color="red" size="4"><?php echo $strKetQua;?></font></b></label></td>
+		</tr>
+		
+		</table>
+
+ </form> 
+
 
 </td>
 
@@ -311,5 +214,3 @@ echo "</table>";
 </body>
 
 </html>
-
-
