@@ -35,7 +35,7 @@ mysql_query("set names 'utf8'",$connect);
 
 <tr>
 <td colspan="3" align="left" bgcolor="white">
-
+<td colspan="3" align="left" bgcolor="white">
 
 
 
